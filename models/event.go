@@ -67,3 +67,12 @@ func UpdateEvent(id int, event Event) (Event, error) {
 	}
 	return event, nil
 }
+
+func DeleteEvent(id int) error {
+	query := `DELETE FROM events WHERE id = ?`
+	_, err := db.DB.Exec(query, id)
+	if err != nil {
+		return err
+	}
+	return nil
+}

@@ -3,6 +3,7 @@ package routes
 import (
 	"database/sql"
 	"errors"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -18,7 +19,8 @@ func getEvents(context *gin.Context) {
 func createEvent(context *gin.Context) {
 	var event models.Event
 	if err := context.ShouldBindJSON(&event); err != nil {
-		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		log.Printf("CreateEvent failed: %v", err)
+		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid event data"})
 		return
 	}
 	createdEvent := event.Save()
@@ -38,6 +40,7 @@ func getEventById(context *gin.Context) {
 			context.JSON(http.StatusNotFound, gin.H{"error": "Event not found"})
 			return
 		}
+		log.Printf("GetEventById failed: %v", err)
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 		return
 	}
@@ -62,8 +65,30 @@ func updateEvent(context *gin.Context) {
 	}
 	updatedEvent, err := models.UpdateEvent(eventId, event)
 	if err != nil {
+		log.Printf("UpdateEvent failed: %v", err)
 		context.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
 		return
 	}
 	context.JSON(http.StatusOK, updatedEvent)
+}
+
+func deleteEvent(context *gin.Context) {
+	id := context.Param("id")
+	eventId, err := strconv.Atoi(id)
+	if err != nil {
+		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid event ID"})
+		return
+	}
+	_, err = models.GetEventById(eventId)
+	if err != nil {
+		context.JSON(http.StatusNotFound, gin.H{"error": "Event not found"})
+		return
+	}
+	err = models.DeleteEvent(eventId)
+	if err != nil {
+		log.Printf("DeleteEvent failed: %v", err)
+		context.JSON(http.StatusInternalServerError, gin.H{"error": "Internal server error"})
+		return
+	}
+	context.JSON(http.StatusOK, gin.H{"message": "Event deleted successfully"})
 }
