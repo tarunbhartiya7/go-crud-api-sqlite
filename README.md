@@ -1,6 +1,15 @@
 # Events CRUD API
 
-A simple REST API for managing events, built with Go, Gin, and SQLite.
+Event management API with user signup, bcrypt hashing, and SQLite storage — built with Go and Gin.
+
+## Features
+
+- **Events CRUD** — Create, read, update, and delete events
+- **User signup** — Register users with email and password
+- **Password hashing** — bcrypt for secure password storage
+- **Relational data** — Events linked to users via foreign key
+- **Error handling** — 404 for missing resources, validation for invalid input
+- **Security** — Passwords never returned in API responses
 
 ## Prerequisites
 
@@ -20,43 +29,40 @@ The server starts at `http://localhost:8080`.
 
 ## API Endpoints
 
-### GET /events
+### Events
 
-List all events.
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | /events | List all events |
+| GET | /events/:id | Get event by ID |
+| POST | /events | Create event |
+| PUT | /events/:id | Update event |
+| DELETE | /events/:id | Delete event |
+
+### Users
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | /signup | Register new user |
+
+### GET /events
 
 ```bash
 curl http://localhost:8080/events
 ```
 
-**Response:** `200 OK`
-
-```json
-[
-  {
-    "id": 1,
-    "name": "Event 1",
-    "description": "Description 1",
-    "location": "Location 1",
-    "dateTime": "2025-03-21T12:00:00Z",
-    "userId": 1
-  }
-]
-```
+**Response:** `200 OK` — Array of events
 
 ### GET /events/:id
-
-Get a single event by ID.
 
 ```bash
 curl http://localhost:8080/events/1
 ```
 
-**Response:** `200 OK` — Returns the event object  
+**Response:** `200 OK` — Event object  
 **Error:** `404 Not Found` — Event does not exist
 
 ### POST /events
-
-Create a new event. `dateTime` and `userId` are set by the server.
 
 ```bash
 curl -X POST http://localhost:8080/events \
@@ -64,22 +70,12 @@ curl -X POST http://localhost:8080/events \
   -d '{"name":"Concert","description":"Live music performance","location":"Central Park"}'
 ```
 
-**Request body:**
+`dateTime` and `userId` are set by the server.
 
-```json
-{
-  "name": "Concert",
-  "description": "Live music performance",
-  "location": "Central Park"
-}
-```
-
-**Response:** `201 Created` — Returns the created event with `id`, `dateTime`, and `userId`  
-**Error:** `400 Bad Request` — Invalid JSON or missing required fields
+**Response:** `201 Created` — Created event  
+**Error:** `400 Bad Request` — Invalid or missing fields
 
 ### PUT /events/:id
-
-Update an existing event.
 
 ```bash
 curl -X PUT http://localhost:8080/events/1 \
@@ -87,12 +83,10 @@ curl -X PUT http://localhost:8080/events/1 \
   -d '{"name":"Updated Concert","description":"Updated description","location":"New Venue"}'
 ```
 
-**Response:** `200 OK` — Returns the updated event  
+**Response:** `200 OK` — Updated event  
 **Error:** `404 Not Found` — Event does not exist
 
 ### DELETE /events/:id
-
-Delete an event.
 
 ```bash
 curl -X DELETE http://localhost:8080/events/1
@@ -100,6 +94,17 @@ curl -X DELETE http://localhost:8080/events/1
 
 **Response:** `200 OK` — `{"message":"Event deleted successfully"}`  
 **Error:** `404 Not Found` — Event does not exist
+
+### POST /signup
+
+```bash
+curl -X POST http://localhost:8080/signup \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","password":"secret123"}'
+```
+
+**Response:** `200 OK` — `{"message":"User created successfully","user":{"id":1,"email":"user@example.com"}}`  
+**Error:** `400 Bad Request` — Invalid or missing fields
 
 ## Project Structure
 
@@ -109,10 +114,14 @@ curl -X DELETE http://localhost:8080/events/1
 ├── db/
 │   └── db.go         # SQLite connection and schema
 ├── models/
-│   └── event.go      # Event model and data access
+│   ├── event.go      # Event model and data access
+│   └── user.go       # User model and data access
 ├── routes/
 │   ├── routes.go     # Route registration
-│   └── events.go     # Event handlers
+│   ├── events.go     # Event handlers
+│   └── users.go      # User handlers
+├── utils/
+│   └── hash.go       # bcrypt password hashing
 └── events.db         # SQLite database (created on first run)
 ```
 
@@ -120,3 +129,4 @@ curl -X DELETE http://localhost:8080/events/1
 
 - [Gin](https://github.com/gin-gonic/gin) — HTTP web framework
 - [go-sqlite3](https://github.com/mattn/go-sqlite3) — SQLite driver for Go
+- [bcrypt](https://pkg.go.dev/golang.org/x/crypto/bcrypt) — Password hashing
