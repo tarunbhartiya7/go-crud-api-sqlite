@@ -20,5 +20,8 @@ func signUp(context *gin.Context) {
 		context.JSON(http.StatusInternalServerError, gin.H{"message": "Internal server error"})
 		return
 	}
-	context.JSON(http.StatusOK, gin.H{"message": "User created successfully", "user": user})
+	context.JSON(http.StatusOK, gin.H{
+		"message": "User created successfully",
+		"user":    gin.H{"id": user.ID, "email": user.Email},
+	})
 }

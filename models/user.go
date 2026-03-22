@@ -1,6 +1,11 @@
 package models
 
-import "example.com/events/db"
+import (
+	"log"
+
+	"example.com/events/db"
+	"example.com/events/utils"
+)
 
 type User struct {
 	ID       int    `json:"id"`
@@ -10,7 +15,12 @@ type User struct {
 
 func (u User) Save() (User, error) {
 	query := `INSERT INTO users (email, password) VALUES (?, ?) RETURNING id`
-	err := db.DB.QueryRow(query, u.Email, u.Password).Scan(&u.ID)
+	hashedPassword, err := utils.HashPassword(u.Password)
+	if err != nil {
+		log.Printf("Error hashing password: %v", err)
+		return User{}, err
+	}
+	err = db.DB.QueryRow(query, u.Email, hashedPassword).Scan(&u.ID)
 	if err != nil {
 		return User{}, err
 	}
