@@ -5,7 +5,7 @@ Event management API with user signup, bcrypt hashing, and SQLite storage — bu
 ## Features
 
 - **Events CRUD** — Create, read, update, and delete events
-- **User signup** — Register users with email and password
+- **User signup & login** — Register and login with JWT authentication
 - **Password hashing** — bcrypt for secure password storage
 - **Relational data** — Events linked to users via foreign key
 - **Error handling** — 404 for missing resources, validation for invalid input
@@ -44,6 +44,7 @@ The server starts at `http://localhost:8080`.
 | Method | Endpoint | Description |
 |--------|----------|-------------|
 | POST | /signup | Register new user |
+| POST | /login | Login and get JWT token |
 
 ### GET /events
 
@@ -64,13 +65,16 @@ curl http://localhost:8080/events/1
 
 ### POST /events
 
+Requires `Authorization` header with JWT token from login.
+
 ```bash
 curl -X POST http://localhost:8080/events \
   -H "Content-Type: application/json" \
+  -H "Authorization: YOUR_JWT_TOKEN" \
   -d '{"name":"Concert","description":"Live music performance","location":"Central Park"}'
 ```
 
-`dateTime` and `userId` are set by the server.
+`dateTime` and `userId` are set by the server from the token.
 
 **Response:** `201 Created` — Created event  
 **Error:** `400 Bad Request` — Invalid or missing fields
@@ -106,6 +110,32 @@ curl -X POST http://localhost:8080/signup \
 **Response:** `200 OK` — `{"message":"User created successfully","user":{"id":1,"email":"user@example.com"}}`  
 **Error:** `400 Bad Request` — Invalid or missing fields
 
+### POST /login
+
+```bash
+curl -X POST http://localhost:8080/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"user@example.com","password":"secret123"}'
+```
+
+**Response:** `200 OK` — `{"message":"Login successful","token":"eyJhbGc..."}`  
+**Error:** `401 Unauthorized` — Invalid credentials
+
+## cURL Quick Reference
+
+```bash
+# Auth
+curl -X POST http://localhost:8080/signup -H "Content-Type: application/json" -d '{"email":"user@example.com","password":"secret123"}'
+curl -X POST http://localhost:8080/login -H "Content-Type: application/json" -d '{"email":"user@example.com","password":"secret123"}'
+
+# Events (replace TOKEN with JWT from login)
+curl http://localhost:8080/events
+curl http://localhost:8080/events/1
+curl -X POST http://localhost:8080/events -H "Content-Type: application/json" -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXI1QGV4YW1wbGUuY29tIiwiZXhwIjoxNzc0Mjc1NzIyLCJ1c2VySWQiOjZ9.K11IOOTwpb7G00GrRNWJTEV0t0RB8Phi4J0vWePXjXU" -d '{"name":"Concert","description":"Live music","location":"Central Park"}'
+curl -X PUT http://localhost:8080/events/1 -H "Content-Type: application/json" -d '{"name":"Updated","description":"Updated","location":"New Venue"}'
+curl -X DELETE http://localhost:8080/events/1
+```
+
 ## Project Structure
 
 ```
@@ -121,7 +151,8 @@ curl -X POST http://localhost:8080/signup \
 │   ├── events.go     # Event handlers
 │   └── users.go      # User handlers
 ├── utils/
-│   └── hash.go       # bcrypt password hashing
+│   ├── hash.go       # bcrypt password hashing
+│   └── jwt.go        # JWT generation and verification
 └── events.db         # SQLite database (created on first run)
 ```
 
@@ -130,3 +161,4 @@ curl -X POST http://localhost:8080/signup \
 - [Gin](https://github.com/gin-gonic/gin) — HTTP web framework
 - [go-sqlite3](https://github.com/mattn/go-sqlite3) — SQLite driver for Go
 - [bcrypt](https://pkg.go.dev/golang.org/x/crypto/bcrypt) — Password hashing
+- [jwt-go](https://github.com/golang-jwt/jwt) — JWT authentication

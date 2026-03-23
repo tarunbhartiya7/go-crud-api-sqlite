@@ -15,9 +15,8 @@ type Event struct {
 	UserId      int       `json:"userId"`
 }
 
-func (e Event) Save() Event {
+func (e Event) Save(userId int) Event {
 	now := time.Now()
-	userId := 1
 	query := `INSERT INTO events (name, description, location, dateTime, userId) 
 		VALUES (?, ?, ?, ?, ?) 
 		RETURNING id, name, description, location, dateTime, userId`
