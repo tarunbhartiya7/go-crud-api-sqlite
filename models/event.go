@@ -15,17 +15,16 @@ type Event struct {
 	UserId      int       `json:"userId"`
 }
 
-func (e Event) Save(userId int) Event {
+func (e *Event) Save() {
 	now := time.Now()
 	query := `INSERT INTO events (name, description, location, dateTime, userId) 
 		VALUES (?, ?, ?, ?, ?) 
 		RETURNING id, name, description, location, dateTime, userId`
-	err := db.DB.QueryRow(query, e.Name, e.Description, e.Location, now, userId).
+	err := db.DB.QueryRow(query, e.Name, e.Description, e.Location, now, e.UserId).
 		Scan(&e.ID, &e.Name, &e.Description, &e.Location, &e.DateTime, &e.UserId)
 	if err != nil {
 		panic("Could not save event: " + err.Error())
 	}
-	return e
 }
 
 func GetAllEvents() []Event {

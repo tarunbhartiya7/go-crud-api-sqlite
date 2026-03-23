@@ -81,9 +81,12 @@ curl -X POST http://localhost:8080/events \
 
 ### PUT /events/:id
 
+Requires `Authorization` header with JWT token from login.
+
 ```bash
 curl -X PUT http://localhost:8080/events/1 \
   -H "Content-Type: application/json" \
+  -H "Authorization: YOUR_JWT_TOKEN" \
   -d '{"name":"Updated Concert","description":"Updated description","location":"New Venue"}'
 ```
 
@@ -92,8 +95,11 @@ curl -X PUT http://localhost:8080/events/1 \
 
 ### DELETE /events/:id
 
+Requires `Authorization` header with JWT token from login.
+
 ```bash
-curl -X DELETE http://localhost:8080/events/1
+curl -X DELETE http://localhost:8080/events/1 \
+  -H "Authorization: YOUR_JWT_TOKEN"
 ```
 
 **Response:** `200 OK` — `{"message":"Event deleted successfully"}`  
@@ -131,9 +137,9 @@ curl -X POST http://localhost:8080/login -H "Content-Type: application/json" -d 
 # Events (replace TOKEN with JWT from login)
 curl http://localhost:8080/events
 curl http://localhost:8080/events/1
-curl -X POST http://localhost:8080/events -H "Content-Type: application/json" -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXI1QGV4YW1wbGUuY29tIiwiZXhwIjoxNzc0Mjc1NzIyLCJ1c2VySWQiOjZ9.K11IOOTwpb7G00GrRNWJTEV0t0RB8Phi4J0vWePXjXU" -d '{"name":"Concert","description":"Live music","location":"Central Park"}'
-curl -X PUT http://localhost:8080/events/1 -H "Content-Type: application/json" -d '{"name":"Updated","description":"Updated","location":"New Venue"}'
-curl -X DELETE http://localhost:8080/events/1
+curl -X POST http://localhost:8080/events -H "Content-Type: application/json" -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXI1QGV4YW1wbGUuY29tIiwiZXhwIjoxNzc0Mjc2NzQzLCJ1c2VySWQiOjZ9.pvZgDXi1LTVMG_vDzuZ_-uHhEm9LYQGEOQOmkokjnx8" -d '{"name":"Concert","description":"Live music","location":"Central Park"}'
+curl -X PUT http://localhost:8080/events/1 -H "Content-Type: application/json" -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXI1QGV4YW1wbGUuY29tIiwiZXhwIjoxNzc0Mjc2NzQzLCJ1c2VySWQiOjZ9.pvZgDXi1LTVMG_vDzuZ_-uHhEm9LYQGEOQOmkokjnx8" -d '{"name":"Updated","description":"Updated","location":"New Venue"}'
+curl -X DELETE http://localhost:8080/events/1 -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXI1QGV4YW1wbGUuY29tIiwiZXhwIjoxNzc0Mjc2NzQzLCJ1c2VySWQiOjZ9.pvZgDXi1LTVMG_vDzuZ_-uHhEm9LYQGEOQOmkokjnx8"
 ```
 
 ## Project Structure
