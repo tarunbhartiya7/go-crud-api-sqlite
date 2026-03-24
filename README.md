@@ -1,6 +1,6 @@
 # Events CRUD API
 
-Event management REST API built with Go, Gin, and SQLite, featuring JWT-based authentication, user signup/login with bcrypt password hashing, full CRUD for events, protected event registration/cancellation routes with ownership and validation checks, and integrated Swagger/OpenAPI documentation for interactive API exploration.
+Event management REST API built with Go, Gin, and SQLite, featuring JWT-based authentication, user signup/login with bcrypt password hashing, full CRUD for events, protected event registration/cancellation routes with ownership and validation checks, integrated Swagger/OpenAPI documentation, CORS support for React frontends, and secure HTTP headers middleware.
 
 <img width="1465" height="874" alt="image" src="https://github.com/user-attachments/assets/ecb9c42e-eafa-4666-b225-38a4583f215d" />
 
@@ -11,7 +11,9 @@ Event management REST API built with Go, Gin, and SQLite, featuring JWT-based au
 - **Password hashing** — bcrypt for secure password storage
 - **Relational data** — Events linked to users via foreign key
 - **Event registration** — Register/cancel event participation for authenticated users
+- **CORS support** — Configured for React dev origins (`localhost:3000`, `localhost:5173`)
 - **Error handling** — 404 for missing resources, validation for invalid input
+- **Security headers** — Common hardening headers via secure middleware
 - **Security** — Passwords never returned in API responses
 
 ## Prerequisites
@@ -43,6 +45,23 @@ Run the API and open Swagger UI:
 - `http://localhost:8080/swagger/index.html`
 
 For protected endpoints, set the `Authorization` header in Swagger UI to your JWT token (without `Bearer` prefix in this project).
+
+## CORS and Security Headers
+
+The API includes middleware for browser/frontend integration and HTTP response hardening:
+
+- **CORS** (Gin CORS middleware)
+  - Allowed origins: `http://localhost:3000`, `http://localhost:5173`
+  - Allowed methods: `GET`, `POST`, `PUT`, `DELETE`, `OPTIONS`
+  - Allowed headers: `Origin`, `Content-Type`, `Authorization`
+  - Credentials enabled and preflight cached for `12h`
+- **Secure headers** (Gin secure middleware)
+  - `X-Frame-Options: DENY`
+  - `X-Content-Type-Options: nosniff`
+  - `X-XSS-Protection: 1; mode=block`
+  - `Referrer-Policy: strict-origin-when-cross-origin`
+  - `Strict-Transport-Security: max-age=31536000; preload`
+  - `Content-Security-Policy: default-src 'self'`
 
 ## API Endpoints
 
@@ -220,6 +239,8 @@ curl -X DELETE http://localhost:8080/events/1/register -H "Authorization: TOKEN"
 
 - [Gin](https://github.com/gin-gonic/gin) — HTTP web framework
 - [go-sqlite3](https://github.com/mattn/go-sqlite3) — SQLite driver for Go
+- [gin-contrib/cors](https://github.com/gin-contrib/cors) — CORS middleware
+- [gin-contrib/secure](https://github.com/gin-contrib/secure) — Secure HTTP headers middleware
 - [bcrypt](https://pkg.go.dev/golang.org/x/crypto/bcrypt) — Password hashing
 - [jwt-go](https://github.com/golang-jwt/jwt) — JWT authentication
 - [swaggo](https://github.com/swaggo/swag) — OpenAPI generation and Swagger UI
