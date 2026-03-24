@@ -1,6 +1,7 @@
 # Events CRUD API
 
 Event management REST API built with Go, Gin, and SQLite, featuring JWT-based authentication, user signup/login with bcrypt password hashing, full CRUD for events, protected event registration/cancellation routes with ownership and validation checks, and integrated Swagger/OpenAPI documentation for interactive API exploration.
+<img width="1465" height="874" alt="image" src="https://github.com/user-attachments/assets/ecb9c42e-eafa-4666-b225-38a4583f215d" />
 
 ## Features
 
@@ -11,10 +12,6 @@ Event management REST API built with Go, Gin, and SQLite, featuring JWT-based au
 - **Event registration** — Register/cancel event participation for authenticated users
 - **Error handling** — 404 for missing resources, validation for invalid input
 - **Security** — Passwords never returned in API responses
-
-## Screenshot
-
-<img width="1465" height="874" alt="image" src="https://github.com/user-attachments/assets/ecb9c42e-eafa-4666-b225-38a4583f215d" />
 
 ## Prerequisites
 
