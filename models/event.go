@@ -1,10 +1,14 @@
 package models
 
 import (
+	"errors"
+	"log"
 	"time"
 
 	"example.com/events/db"
 )
+
+var ErrRegistrationNotFound = errors.New("no registration found")
 
 type Event struct {
 	ID          int       `json:"id"`
@@ -71,6 +75,31 @@ func DeleteEvent(id int) error {
 	_, err := db.DB.Exec(query, id)
 	if err != nil {
 		return err
+	}
+	return nil
+}
+
+func (e *Event) Register(userId int) error {
+	query := `INSERT INTO registrations (eventId, userId) VALUES (?, ?)`
+	_, err := db.DB.Exec(query, e.ID, userId)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+func (e Event) CancelRegistration(userId int) error {
+	query := `DELETE FROM registrations WHERE eventId = ? AND userId = ?`
+	rowsAffected, err := db.DB.Exec(query, e.ID, userId)
+	if err != nil {
+		return err
+	}
+	affected, _ := rowsAffected.RowsAffected()
+
+	// if 0 rows are affected return error
+	if affected == 0 {
+		log.Printf("No registration found for event %d and user %d", e.ID, userId)
+		return ErrRegistrationNotFound
 	}
 	return nil
 }
