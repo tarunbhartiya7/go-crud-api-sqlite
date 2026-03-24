@@ -12,6 +12,10 @@ Event management REST API built with Go, Gin, and SQLite, featuring JWT-based au
 - **Error handling** — 404 for missing resources, validation for invalid input
 - **Security** — Passwords never returned in API responses
 
+## Screenshot
+
+![Swagger UI Screenshot](/Users/tarun/.cursor/projects/Users-tarun-Documents-Programming-Go-Projects-crud-api-sql/assets/Screenshot_2026-03-24_at_7.02.45_PM-e1119468-a4bf-41f5-bc0a-92390958568c.png)
+
 ## Prerequisites
 
 - Go 1.25+
