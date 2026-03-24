@@ -132,14 +132,14 @@ curl -X POST http://localhost:8080/login \
 ```bash
 # Auth
 curl -X POST http://localhost:8080/signup -H "Content-Type: application/json" -d '{"email":"user@example.com","password":"secret123"}'
-curl -X POST http://localhost:8080/login -H "Content-Type: application/json" -d '{"email":"user@example.com","password":"secret123"}'
+curl -X POST http://localhost:8080/login -H "Content-Type: application/json" -d '{"email":"user5@example.com","password":"secret123"}' | jq
 
 # Events (replace TOKEN with JWT from login)
 curl http://localhost:8080/events
 curl http://localhost:8080/events/1
 curl -X POST http://localhost:8080/events -H "Content-Type: application/json" -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXI1QGV4YW1wbGUuY29tIiwiZXhwIjoxNzc0Mjc2NzQzLCJ1c2VySWQiOjZ9.pvZgDXi1LTVMG_vDzuZ_-uHhEm9LYQGEOQOmkokjnx8" -d '{"name":"Concert","description":"Live music","location":"Central Park"}'
-curl -X PUT http://localhost:8080/events/1 -H "Content-Type: application/json" -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXI1QGV4YW1wbGUuY29tIiwiZXhwIjoxNzc0Mjc2NzQzLCJ1c2VySWQiOjZ9.pvZgDXi1LTVMG_vDzuZ_-uHhEm9LYQGEOQOmkokjnx8" -d '{"name":"Updated","description":"Updated","location":"New Venue"}'
-curl -X DELETE http://localhost:8080/events/1 -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXI1QGV4YW1wbGUuY29tIiwiZXhwIjoxNzc0Mjc2NzQzLCJ1c2VySWQiOjZ9.pvZgDXi1LTVMG_vDzuZ_-uHhEm9LYQGEOQOmkokjnx8"
+curl -X PUT http://localhost:8080/events/7 -H "Content-Type: application/json" -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXI1QGV4YW1wbGUuY29tIiwiZXhwIjoxNzc0MzM2MzU3LCJ1c2VySWQiOjZ9.dw5O-wyGGOOhVtfEBkZilT04FMWHZPTcAbRUE0QVWhs" -d '{"name":"Updated","description":"Updated","location":"New Venue"}' | jq
+curl -X DELETE http://localhost:8080/events/7 -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXI1QGV4YW1wbGUuY29tIiwiZXhwIjoxNzc0MzM2MzU3LCJ1c2VySWQiOjZ9.dw5O-wyGGOOhVtfEBkZilT04FMWHZPTcAbRUE0QVWhs" | jq
 ```
 
 ## Project Structure

@@ -69,7 +69,14 @@ func updateEvent(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
-	event.UserId = eventId
+
+	userId := context.GetInt("userId")
+	log.Printf("Event user ID: %d, User ID: %d", event.UserId, userId)
+	if event.UserId != userId {
+		context.JSON(http.StatusForbidden, gin.H{"message": "Forbidden"})
+		return
+	}
+
 	updatedEvent, err := models.UpdateEvent(eventId, event)
 	if err != nil {
 		log.Printf("UpdateEvent failed: %v", err)
@@ -86,11 +93,19 @@ func deleteEvent(context *gin.Context) {
 		context.JSON(http.StatusBadRequest, gin.H{"error": "Invalid event ID"})
 		return
 	}
-	_, err = models.GetEventById(eventId)
+	event, err := models.GetEventById(eventId)
 	if err != nil {
 		context.JSON(http.StatusNotFound, gin.H{"error": "Event not found"})
 		return
 	}
+
+	userId := context.GetInt("userId")
+	log.Printf("Event user ID: %d, User ID: %d", event.UserId, userId)
+	if event.UserId != userId {
+		context.JSON(http.StatusForbidden, gin.H{"message": "Forbidden"})
+		return
+	}
+
 	err = models.DeleteEvent(eventId)
 	if err != nil {
 		log.Printf("DeleteEvent failed: %v", err)
