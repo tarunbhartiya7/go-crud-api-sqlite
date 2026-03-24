@@ -14,7 +14,7 @@ Event management REST API built with Go, Gin, and SQLite, featuring JWT-based au
 
 ## Screenshot
 
-![Swagger UI Screenshot](/Users/tarun/.cursor/projects/Users-tarun-Documents-Programming-Go-Projects-crud-api-sql/assets/Screenshot_2026-03-24_at_7.02.45_PM-e1119468-a4bf-41f5-bc0a-92390958568c.png)
+<img width="1465" height="874" alt="image" src="https://github.com/user-attachments/assets/ecb9c42e-eafa-4666-b225-38a4583f215d" />
 
 ## Prerequisites
 
