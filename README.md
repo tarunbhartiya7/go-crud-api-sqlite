@@ -1,6 +1,6 @@
 # Events CRUD API
 
-Event management API with user signup, bcrypt hashing, and SQLite storage — built with Go and Gin.
+Event management REST API built with Go, Gin, and SQLite, featuring JWT-based authentication, user signup/login with bcrypt password hashing, full CRUD for events, and protected event registration/cancellation routes with ownership and validation checks.
 
 ## Features
 
@@ -8,6 +8,7 @@ Event management API with user signup, bcrypt hashing, and SQLite storage — bu
 - **User signup & login** — Register and login with JWT authentication
 - **Password hashing** — bcrypt for secure password storage
 - **Relational data** — Events linked to users via foreign key
+- **Event registration** — Register/cancel event participation for authenticated users
 - **Error handling** — 404 for missing resources, validation for invalid input
 - **Security** — Passwords never returned in API responses
 
@@ -93,7 +94,8 @@ curl -X PUT http://localhost:8080/events/1 \
 ```
 
 **Response:** `200 OK` — Updated event  
-**Error:** `404 Not Found` — Event does not exist
+**Error:** `404 Not Found` — Event does not exist  
+**Error:** `403 Forbidden` — You are not the owner of this event
 
 ### DELETE /events/:id
 
@@ -105,7 +107,8 @@ curl -X DELETE http://localhost:8080/events/1 \
 ```
 
 **Response:** `200 OK` — `{"message":"Event deleted successfully"}`  
-**Error:** `404 Not Found` — Event does not exist
+**Error:** `404 Not Found` — Event does not exist  
+**Error:** `403 Forbidden` — You are not the owner of this event
 
 ### POST /events/:id/register
 
@@ -128,7 +131,8 @@ curl -X DELETE http://localhost:8080/events/1/register \
   -H "Authorization: YOUR_JWT_TOKEN"
 ```
 
-**Response:** `200 OK` — Registration cancelled (when implemented)
+**Response:** `200 OK` — `{"message":"Registration cancelled"}`  
+**Error:** `404 Not Found` — Registration not found
 
 ### POST /signup
 
@@ -162,11 +166,11 @@ curl -X POST http://localhost:8080/login -H "Content-Type: application/json" -d 
 # Events (replace TOKEN with JWT from login)
 curl http://localhost:8080/events
 curl http://localhost:8080/events/1
-curl -X POST http://localhost:8080/events -H "Content-Type: application/json" -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJleHAiOjE3NzQzMzg5MDgsInVzZXJJZCI6MX0.XzIng_eGg960_TeRgx0ltfXICt0OFzfCeHzXXMUkIJ8" -d '{"name":"Concert","description":"Live music","location":"Central Park"}' | jq
-curl -X PUT http://localhost:8080/events/7 -H "Content-Type: application/json" -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXI1QGV4YW1wbGUuY29tIiwiZXhwIjoxNzc0MzM2MzU3LCJ1c2VySWQiOjZ9.dw5O-wyGGOOhVtfEBkZilT04FMWHZPTcAbRUE0QVWhs" -d '{"name":"Updated","description":"Updated","location":"New Venue"}' | jq
-curl -X DELETE http://localhost:8080/events/7 -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXI1QGV4YW1wbGUuY29tIiwiZXhwIjoxNzc0MzM2MzU3LCJ1c2VySWQiOjZ9.dw5O-wyGGOOhVtfEBkZilT04FMWHZPTcAbRUE0QVWhs" | jq
-curl -X POST http://localhost:8080/events/1/register -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJleHAiOjE3NzQzMzg5MDgsInVzZXJJZCI6MX0.XzIng_eGg960_TeRgx0ltfXICt0OFzfCeHzXXMUkIJ8" | jq
-curl -X DELETE http://localhost:8080/events/1/register -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXJAZXhhbXBsZS5jb20iLCJleHAiOjE3NzQzMzg5MDgsInVzZXJJZCI6MX0.XzIng_eGg960_TeRgx0ltfXICt0OFzfCeHzXXMUkIJ8" | jq
+curl -X POST http://localhost:8080/events -H "Content-Type: application/json" -H "Authorization: TOKEN" -d '{"name":"Concert","description":"Live music","location":"Central Park"}' | jq
+curl -X PUT http://localhost:8080/events/7 -H "Content-Type: application/json" -H "Authorization: TOKEN" -d '{"name":"Updated","description":"Updated","location":"New Venue"}' | jq
+curl -X DELETE http://localhost:8080/events/7 -H "Authorization: TOKEN" | jq
+curl -X POST http://localhost:8080/events/1/register -H "Authorization: TOKEN" | jq
+curl -X DELETE http://localhost:8080/events/1/register -H "Authorization: TOKEN" | jq
 ```
 
 ## Project Structure
@@ -182,7 +186,10 @@ curl -X DELETE http://localhost:8080/events/1/register -H "Authorization: eyJhbG
 ├── routes/
 │   ├── routes.go     # Route registration
 │   ├── events.go     # Event handlers
+│   ├── register.go   # Event registration handlers
 │   └── users.go      # User handlers
+├── middlewares/
+│   └── auth.go       # JWT auth middleware
 ├── utils/
 │   ├── hash.go       # bcrypt password hashing
 │   └── jwt.go        # JWT generation and verification
