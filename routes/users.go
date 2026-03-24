@@ -9,6 +9,17 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// signUp godoc
+// @Summary Register user
+// @Description Create a new user account.
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body signupRequest true "Signup payload"
+// @Success 200 {object} signupResponse
+// @Failure 400 {object} messageResponse
+// @Failure 500 {object} messageResponse
+// @Router /signup [post]
 func signUp(context *gin.Context) {
 	var user models.User
 	if err := context.ShouldBindJSON(&user); err != nil {
@@ -27,6 +38,18 @@ func signUp(context *gin.Context) {
 	})
 }
 
+// login godoc
+// @Summary Login user
+// @Description Authenticate a user and return a JWT token.
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param request body loginRequest true "Login payload"
+// @Success 200 {object} loginResponse
+// @Failure 400 {object} messageResponse
+// @Failure 401 {object} messageResponse
+// @Failure 500 {object} messageResponse
+// @Router /login [post]
 func login(context *gin.Context) {
 	var user models.User
 	if err := context.ShouldBindJSON(&user); err != nil {

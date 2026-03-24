@@ -9,6 +9,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
+// registerForEvent godoc
+// @Summary Register for event
+// @Description Register the authenticated user for an event.
+// @Tags registrations
+// @Produce json
+// @Security ApiKeyAuth
+// @Param id path int true "Event ID"
+// @Success 201 {object} messageResponse
+// @Failure 400 {object} errorResponse
+// @Failure 404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /events/{id}/register [post]
 func registerForEvent(context *gin.Context) {
 	userId := context.GetInt("userId")
 	id := context.Param("id")
@@ -32,6 +44,18 @@ func registerForEvent(context *gin.Context) {
 	context.JSON(http.StatusCreated, gin.H{"message": "Registered for event"})
 }
 
+// cancelRegistrationForEvent godoc
+// @Summary Cancel registration
+// @Description Cancel the authenticated user's registration for an event.
+// @Tags registrations
+// @Produce json
+// @Security ApiKeyAuth
+// @Param id path int true "Event ID"
+// @Success 200 {object} messageResponse
+// @Failure 400 {object} errorResponse
+// @Failure 404 {object} errorResponse
+// @Failure 500 {object} errorResponse
+// @Router /events/{id}/register [delete]
 func cancelRegistrationForEvent(context *gin.Context) {
 	userId := context.GetInt("userId")
 	id := context.Param("id")

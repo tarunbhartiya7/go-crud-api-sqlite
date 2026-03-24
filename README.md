@@ -1,6 +1,6 @@
 # Events CRUD API
 
-Event management REST API built with Go, Gin, and SQLite, featuring JWT-based authentication, user signup/login with bcrypt password hashing, full CRUD for events, and protected event registration/cancellation routes with ownership and validation checks.
+Event management REST API built with Go, Gin, and SQLite, featuring JWT-based authentication, user signup/login with bcrypt password hashing, full CRUD for events, protected event registration/cancellation routes with ownership and validation checks, and integrated Swagger/OpenAPI documentation for interactive API exploration.
 
 ## Features
 
@@ -27,6 +27,20 @@ go run main.go
 ```
 
 The server starts at `http://localhost:8080`.
+
+## Swagger Docs
+
+Generate OpenAPI docs:
+
+```bash
+go run github.com/swaggo/swag/cmd/swag@latest init -g main.go
+```
+
+Run the API and open Swagger UI:
+
+- `http://localhost:8080/swagger/index.html`
+
+For protected endpoints, set the `Authorization` header in Swagger UI to your JWT token (without `Bearer` prefix in this project).
 
 ## API Endpoints
 
@@ -188,6 +202,10 @@ curl -X DELETE http://localhost:8080/events/1/register -H "Authorization: TOKEN"
 │   ├── events.go     # Event handlers
 │   ├── register.go   # Event registration handlers
 │   └── users.go      # User handlers
+├── docs/             # Generated Swagger docs (swagger.json/yaml)
+│   ├── docs.go
+│   ├── swagger.json
+│   └── swagger.yaml
 ├── middlewares/
 │   └── auth.go       # JWT auth middleware
 ├── utils/
@@ -202,3 +220,4 @@ curl -X DELETE http://localhost:8080/events/1/register -H "Authorization: TOKEN"
 - [go-sqlite3](https://github.com/mattn/go-sqlite3) — SQLite driver for Go
 - [bcrypt](https://pkg.go.dev/golang.org/x/crypto/bcrypt) — Password hashing
 - [jwt-go](https://github.com/golang-jwt/jwt) — JWT authentication
+- [swaggo](https://github.com/swaggo/swag) — OpenAPI generation and Swagger UI

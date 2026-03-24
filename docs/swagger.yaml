@@ -1,0 +1,398 @@
+basePath: /
+definitions:
+  models.Event:
+    properties:
+      dateTime:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      location:
+        type: string
+      name:
+        type: string
+      userId:
+        type: integer
+    required:
+    - description
+    - location
+    - name
+    type: object
+  routes.createEventRequest:
+    properties:
+      description:
+        example: Live music performance
+        type: string
+      location:
+        example: Central Park
+        type: string
+      name:
+        example: Concert
+        type: string
+    type: object
+  routes.errorResponse:
+    properties:
+      error:
+        type: string
+    type: object
+  routes.loginRequest:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      password:
+        example: secret123
+        type: string
+    type: object
+  routes.loginResponse:
+    properties:
+      message:
+        example: Login successful
+        type: string
+      token:
+        example: eyJhbGciOiJI...
+        type: string
+    type: object
+  routes.messageResponse:
+    properties:
+      message:
+        type: string
+    type: object
+  routes.signupRequest:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      password:
+        example: secret123
+        type: string
+    type: object
+  routes.signupResponse:
+    properties:
+      message:
+        example: User created successfully
+        type: string
+      user:
+        $ref: '#/definitions/routes.signupUserData'
+    type: object
+  routes.signupUserData:
+    properties:
+      email:
+        example: user@example.com
+        type: string
+      id:
+        example: 1
+        type: integer
+    type: object
+  routes.updateEventRequest:
+    properties:
+      description:
+        example: Updated details
+        type: string
+      location:
+        example: New Venue
+        type: string
+      name:
+        example: Updated Concert
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: Event management API with auth and registrations.
+  title: Events CRUD API
+  version: "1.0"
+paths:
+  /events:
+    get:
+      description: Get all events.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/models.Event'
+            type: array
+      summary: List events
+      tags:
+      - events
+    post:
+      consumes:
+      - application/json
+      description: Create a new event for the authenticated user.
+      parameters:
+      - description: Event payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/routes.createEventRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/models.Event'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/routes.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/routes.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Create event
+      tags:
+      - events
+  /events/{id}:
+    delete:
+      description: Delete an event owned by the authenticated user.
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/routes.messageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/routes.errorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/routes.messageResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/routes.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/routes.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Delete event
+      tags:
+      - events
+    get:
+      description: Get an event by ID.
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Event'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/routes.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/routes.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/routes.errorResponse'
+      summary: Get event
+      tags:
+      - events
+    put:
+      consumes:
+      - application/json
+      description: Update an event owned by the authenticated user.
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: Event payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/routes.updateEventRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Event'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/routes.errorResponse'
+        "403":
+          description: Forbidden
+          schema:
+            $ref: '#/definitions/routes.messageResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/routes.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/routes.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Update event
+      tags:
+      - events
+  /events/{id}/register:
+    delete:
+      description: Cancel the authenticated user's registration for an event.
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/routes.messageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/routes.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/routes.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/routes.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Cancel registration
+      tags:
+      - registrations
+    post:
+      description: Register the authenticated user for an event.
+      parameters:
+      - description: Event ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created
+          schema:
+            $ref: '#/definitions/routes.messageResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/routes.errorResponse'
+        "404":
+          description: Not Found
+          schema:
+            $ref: '#/definitions/routes.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/routes.errorResponse'
+      security:
+      - ApiKeyAuth: []
+      summary: Register for event
+      tags:
+      - registrations
+  /login:
+    post:
+      consumes:
+      - application/json
+      description: Authenticate a user and return a JWT token.
+      parameters:
+      - description: Login payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/routes.loginRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/routes.loginResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/routes.messageResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/routes.messageResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/routes.messageResponse'
+      summary: Login user
+      tags:
+      - auth
+  /signup:
+    post:
+      consumes:
+      - application/json
+      description: Create a new user account.
+      parameters:
+      - description: Signup payload
+        in: body
+        name: request
+        required: true
+        schema:
+          $ref: '#/definitions/routes.signupRequest'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/routes.signupResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/routes.messageResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/routes.messageResponse'
+      summary: Register user
+      tags:
+      - auth
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Authorization
+    type: apiKey
+swagger: "2.0"
